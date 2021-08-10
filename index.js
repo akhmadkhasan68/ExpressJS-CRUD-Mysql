@@ -1,6 +1,6 @@
 const express = require('express');
-const db = require('./models');
-const apiRoutes = require('./router/routes.js');
+const db = require('./src/models');
+const apiRoutes = require('./src/router/routes.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
