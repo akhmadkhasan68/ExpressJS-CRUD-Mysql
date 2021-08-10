@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "simple crud mysql",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
