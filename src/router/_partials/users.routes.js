@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require('../../controller/users.controller.js'); //import users controller
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 
 router.get('/', userController.fetch);
 router.get('/:id', userController.fetchById);
