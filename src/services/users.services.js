@@ -1,42 +1,25 @@
 const { Users } = require('../models'); //load user model
 
 exports.create = (data) => {
-    return new Promise((resolve, reject) => {
-        Users.create(data)
-        .then(record => resolve(record))
-        .catch(err => reject(err));
-    });
+    return Users.create(data)
+        .then(record => record)
+        .catch(err => {
+            throw new Error('Error while create data!');
+        });
 }
 
-exports.update = (id, data) => {
-    return new Promise((resolve, reject) => {
-        Users.update(data, {
-            where: {
-                id
-            }
-        })
-        .then(res => {
-            if(!res){
-                reject("Error while updating data!");
-            }
+exports.update = async (id, data) => {
+    const findRow = await Users.findOne({where:{id}});
 
-            resolve("Success updating data!")
-        })
-        .catch(err => reject(err));
-    });
+    if(!findRow) throw new Error("Data not found!");
+    
+    return Users.update(data, {where: {id}}).then(res => res).catch(err => err);
 }
 
-exports.destroy = (id) => {
-    return new Promise((resolve, reject) => {
-        Users.destroy({
-            where: {
-                id
-            }
-        }).then(data => {
-            if(!data) reject("Error while deleting data!");
+exports.destroy = async (id) => {
+    const findRow = await Users.findOne({where:{id}});
+    
+    if(!findRow) throw new Error("Data not found!");
 
-            resolve("success deleting data!")
-        })
-        .catch(err => reject(err));
-    })
+    return Users.destroy({where: {id}}).then(res => res).catch(err => err);
 }
