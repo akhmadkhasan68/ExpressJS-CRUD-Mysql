@@ -1,12 +1,12 @@
 const express = require('express');
-const userController = require('../../controller/users.controller.js'); //import users controller
 const router = express.Router();
+const userController = require('../../controller/users.controller.js'); //import users controller
 const { UsersValidation, validate } = require('../../validations');
 
 router.get('/', userController.fetch);
 router.get('/:id', userController.fetchById);
-router.post('/', UsersValidation.enterData(), validate, userController.create);
-router.put('/:id', UsersValidation.enterData(), validate, userController.update);
+router.post('/', UsersValidation.createData(), validate, userController.create);
+router.put('/:id', UsersValidation.UpdateData(), validate, userController.update);
 router.delete('/:id', userController.destroy);
 
 module.exports = router;
