@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { success, error } = require('../helpers/response.js'); //load response helper
+const { validation: Errorvalidation } = require('../helpers/response.js'); //load response helper
 const { body, validationResult } = require('express-validator');
 
 const basename = path.basename(__filename);
@@ -20,7 +20,7 @@ validation['validate'] = (req, res, next) => {
     const extractedErrors = [];
     errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }));
 
-    return res.status(422).json(error(extractedErrors, res.statusCode));
+    return res.status(422).json(Errorvalidation(extractedErrors, res.statusCode));
 }
 
 module.exports = validation;

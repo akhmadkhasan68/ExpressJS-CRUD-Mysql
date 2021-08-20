@@ -60,7 +60,7 @@ const createData = () => {
 }
 
 const UpdateData = () => {
-    let validator = [
+    return [
         body("firstName").notEmpty().withMessage(`${validationMessage.notEmpty('First Name')}`).isLength({
             max: 10
         }).withMessage(validationMessage.isLength("First Name", { max:10 })),
@@ -118,12 +118,11 @@ const UpdateData = () => {
             }
             return true;
         })
-    ]
-
-    return validator;
+    ];
 }
 
-module.exports = {
+module.exports =
+ {
     name: 'UsersValidation',
     createData,
     UpdateData,
