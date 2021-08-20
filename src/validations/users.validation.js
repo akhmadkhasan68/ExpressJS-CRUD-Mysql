@@ -1,4 +1,4 @@
-const { body, CustomValidator, validationResult, param } = require('express-validator');
+const { body } = require('express-validator');
 const { Users, Op } = require('../models'); //load user model
 
 const roles = ['admin', 'guest', 'seller'];
