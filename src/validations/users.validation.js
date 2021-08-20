@@ -1,4 +1,4 @@
-const { body, CustomValidator, param } = require('express-validator');
+const { body, CustomValidator, validationResult, param } = require('express-validator');
 const { Users, Op } = require('../models'); //load user model
 
 const roles = ['admin', 'guest', 'seller'];
@@ -48,9 +48,7 @@ const createData = () => {
         body("conf_password").notEmpty().withMessage("Password Confirmation is required").isLength({
             min: 8,
             max: 16
-        }).withMessage("Password must have value between 5 and 8 character").custom((value, {
-            req
-        }) => {
+        }).withMessage("Password must have value between 5 and 8 character").custom((value, {req}) => {
             if (value !== req.body.password && value) {
                 throw new Error("Password confirmation does not match password");
             }
@@ -105,21 +103,17 @@ const UpdateData = () => {
             return true;
         }),
         body("role").notEmpty().withMessage("Role is required").isIn(roles).withMessage(`Role must have value ${roles.join(', ')}`),
-        body('change_password').custom((value, { req }) => {
-            if(value && value == 1){
-                body("password").notEmpty().withMessage("Password is required").isLength({
-                    min: 8,
-                    max: 16
-                }).withMessage("Password must have value between 5 and 8 character"),
-                body("conf_password").notEmpty().withMessage("Password Confirmation is required").isLength({
-                    min: 8,
-                    max: 16
-                }).withMessage("Password must have value between 5 and 8 character").custom((value, { req }) => {
-                    if (value !== req.body.password && value !== null) {
-                        throw new Error("Password confirmation does not match password");
-                    }
-                    return true;
-                })
+        body("change_password").optional(),
+        body("password").if(body('change_password').exists()).notEmpty().withMessage("Password is required").isLength({
+            min: 8,
+            max: 16
+        }).withMessage("Password must have value between 5 and 8 character"),
+        body("conf_password").if(body('change_password').exists()).notEmpty().withMessage("Password Confirmation is required").isLength({
+            min: 8,
+            max: 16
+        }).withMessage("Password must have value between 5 and 8 character").custom((value, {req}) => {
+            if (value !== req.body.password && value) {
+                throw new Error("Password confirmation does not match password");
             }
             return true;
         })
