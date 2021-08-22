@@ -1,15 +1,18 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { success, error, validation } = require('../helpers/response.js');
-const secretKey = process.env.JWTPRIVATEKEY;
+const TOKEN_SECRET = process.env.JWTPRIVATEKEY;
 
 const verifyToken = (req, res, next) => {
-    let token = req.headers['x-access-token'];
+    let authHeader = req.headers['authorization'];
+    let token = authHeader && authHeader.split(' ')[1];
 
     if(!token) return res.status(403).json(error("No Token Provided!", res.statusCode));
 
-    jwt.verify(token, secretKey, (err, decoded) => {
+    jwt.verify(token, TOKEN_SECRET, (err, payload) => {
         if(err) return res.status(401).json(error("Unauthorized!", res.statusCode));
 
+        req.payload = payload;
         next();
     });
 }

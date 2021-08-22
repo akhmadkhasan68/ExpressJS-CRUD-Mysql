@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Users } = require('../models'); //load user model
 const { success, error } = require('../helpers/response.js'); //load response helper
 const UsersService = require('../services/users.services.js');
@@ -53,6 +54,13 @@ const create = async (req, res) => {
 const update = async (req, res) => {
     const { id } = req.params;
     const body = req.body;
+
+    if(!!req.body.password){
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        let encryptPassword = await bcrypt.hash(req.body.password, salt);
+
+        body.password = encryptPassword;
+    }
 
     try {
         const updateUser = await UsersService.update(id, body);

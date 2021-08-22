@@ -7,12 +7,12 @@ exports.isEmail = (field) => {
 }
 
 exports.isLength = (field, { min, max}) => {
-    if(!min && !max){
-        return `${field} must have value between ${min} and ${max} character`;
-    }else if(!max && min){
+    if(!max && min){
         return `${field} must must have minimum ${min} character`;
     }
     else if(!min && max){
         return `${field} must must have maximum ${max} character`;
+    }else{
+        return `${field} must have value between ${min} and ${max} character`;
     }
 };
