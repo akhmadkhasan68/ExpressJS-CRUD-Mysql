@@ -13,11 +13,17 @@ const login = async (req, res) => {
     }
 }
 
-const logout = (req, res) => {
+const refreshToken = async (req, res) => {
+    const token = req.body.token;
 
+    try {
+        const refreshProcess = await authService.refreshToken(token);
+    } catch (e) {
+        res.status(500).json(error(e.message, res.statusCode));
+    }
 }
 
 module.exports = {
     login,
-    logout
+    refreshToken
 }

@@ -4,6 +4,6 @@ const authController = require('../../controller/auth.controller');
 const { AuthValidation, validate } = require('../../validations');
 
 router.post('/login', AuthValidation.login(), validate, authController.login);
-router.delete('/logout', authController.logout);
+router.post('/refresh_token', authController.refreshToken);
 
 module.exports = router;

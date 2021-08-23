@@ -19,11 +19,11 @@ const login = async (username, password) => {
             role: user.role
         };
 
-        const token = 'Bearer ' + jwt.sign(payload, process.env.JWTPRIVATEKEY, {
-            expiresIn: 86400 //24h expired
-        });
+        const accessToken = 'Bearer ' + generateAccessToken(process.env.ACCESS_TOKEN_SECRET, payload, {expiresIn: '30m'}); //30m expired
+        const refreshToken = generateAccessToken(process.env.REFRESH_TOKEN_SECRET, payload);
 
-        payload.token = token;
+        payload.accessToken = accessToken;
+        payload.refreshToken = refreshToken;
 
         return payload;
     } catch (e) {
@@ -31,6 +31,20 @@ const login = async (username, password) => {
     }
 }
 
+const refreshToken = (token) => {
+    if(!token) res.status(403).json(error("No Token Provided!", res.statusCode));
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
+        if(err) throw new Error(err.message);
+
+        const accessToken = 'Bearer ' + generateAccessToken(process.env.ACCESS_TOKEN_SECRET, payload, {expiresIn: '30m'}); //30m expired
+    });
+}
+
+const generateAccessToken = (secret_key, payload, expired) => {
+    return jwt.sign(payload, secret_key, expired);
+}
+
 module.exports = {
-    login
+    login,
+    refreshToken
 }
