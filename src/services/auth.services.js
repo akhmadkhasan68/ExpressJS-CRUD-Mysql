@@ -2,6 +2,7 @@ require('dotenv').config();
 const { Users } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const redisClient = require('../config/redis_client.js');
 
 class AuthService{
     constructor(){
@@ -17,6 +18,7 @@ class AuthService{
             if(!passwordValid) throw new Error("Invalid Password!");
     
             let payload = {
+                user_id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 username: user.username,
@@ -26,6 +28,7 @@ class AuthService{
     
             const accessToken = 'Bearer ' + this.generateAccessToken(payload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '20s'}); //20s expired
             const refreshToken = this.generateAccessToken(payload, process.env.REFRESH_TOKEN_SECRET);
+            redisClient.set(`refresh_token_${user.id}`, refreshToken);
     
             payload.accessToken = accessToken;
             payload.refreshToken = refreshToken;
@@ -42,6 +45,7 @@ class AuthService{
             if(err) throw new Error(err.message);
 
             const newPayload = {
+                user_id: payload.id,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
                 username: payload.username,

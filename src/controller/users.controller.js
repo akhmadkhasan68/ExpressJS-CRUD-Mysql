@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Users } = require('../models'); //load user model
 const { success, error } = require('../helpers/response.js'); //load response helper
-const UsersService = require('../services/users.services.js');
+const { UsersService } = require('../services/users.services.js');
 const bcrypt = require('bcryptjs');
 
 const fetch = async (req, res) => {
@@ -36,7 +36,8 @@ const create = async (req, res) => {
     let encryptPassword = await bcrypt.hash(password, salt);
 
     try {
-        const createUser = await UsersService.create({
+        const userService = new UsersService();
+        const createUser = await userService.create({
             firstName,
             lastName,
             username,
@@ -63,7 +64,8 @@ const update = async (req, res) => {
     }
 
     try {
-        const updateUser = await UsersService.update(id, body);
+        const userService = new UsersService();
+        const updateUser = await userService.update(id, body);
         res.status(200).json(success("OK", updateUser, res.statusCode));
     } catch (e) {
         res.status(500).json(error(e.message, res.statusCode));
@@ -74,7 +76,8 @@ const destroy = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const deleteUser = await UsersService.destroy(id);
+        const userService = new UsersService();
+        const deleteUser = await userService.destroy(id);
         res.status(200).json(success("OK", deleteUser, res.statusCode));
     } catch (e) {
         res.status(500).json(error(e.message, res.statusCode));
