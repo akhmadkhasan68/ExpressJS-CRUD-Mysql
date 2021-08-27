@@ -40,21 +40,30 @@ class AuthService{
     }
 
     async refreshToken(token){
-        if(!token) throw new Error("No Token Provided!");
-        return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
-            if(err) throw new Error(err.message);
+        return new Promise((resolve, reject) => {
+            if(!token) reject("No Token Provided!");
 
-            const newPayload = {
-                user_id: payload.id,
-                firstName: payload.firstName,
-                lastName: payload.lastName,
-                username: payload.username,
-                email: payload.email,
-                role: payload.role,
-            };
+            jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
+                if(err) reject(err.message);
+    
+                redisClient.GET(`refresh_token_${payload.user_id}`, (err, reply) => {
+                    if(!reply) reject("Token not found!");
+                    if(reply != token) reject("Token not valid!");
 
-            const accessToken = 'Bearer ' + this.generateAccessToken(newPayload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '20s'}); //20s expired
-            return accessToken;
+                    const newPayload = {
+                        user_id: payload.user_id,
+                        firstName: payload.firstName,
+                        lastName: payload.lastName,
+                        username: payload.username,
+                        email: payload.email,
+                        role: payload.role,
+                    };
+        
+                    const accessToken = 'Bearer ' + this.generateAccessToken(newPayload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '20s'}); //20s expired
+                    resolve(accessToken);
+                });
+    
+            });
         });
     }
 

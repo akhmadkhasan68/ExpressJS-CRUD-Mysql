@@ -23,7 +23,7 @@ const refreshToken = async (req, res) => {
        
         res.status(200).json(success("OK", refreshProcess, res.statusCode))
     } catch (e) {
-        res.status(500).json(error(e.message, res.statusCode));
+        res.status(500).json(error(e, res.statusCode));
     }
 }
 
