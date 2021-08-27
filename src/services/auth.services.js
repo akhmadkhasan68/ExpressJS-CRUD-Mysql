@@ -67,6 +67,20 @@ class AuthService{
         });
     }
 
+    logout(payload){
+        const { user_id } = payload;
+
+        return new Promise((resolve, reject) => {
+            if(!user_id) reject('user not found!');
+            
+            redisClient.DEL(`refresh_token_${user_id}`, (err, reply) => {
+                if(err) reject(err);
+
+                resolve(reply);
+            });
+        });
+    }
+
     generateAccessToken (payload, secret_key, expired) {
         return jwt.sign(payload, secret_key, expired);
     }

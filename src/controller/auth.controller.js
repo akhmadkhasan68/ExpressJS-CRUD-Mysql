@@ -27,7 +27,21 @@ const refreshToken = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    const payload = req.payload;
+
+    try {
+        const authService = new AuthService();
+        const logoutProcess = await authService.logout(payload);
+
+        res.status(200).json(success("OK", logoutProcess, res.statusCode))
+    } catch (e) {
+        res.status(500).json(error(e.message, res.statusCode));
+    }
+}
+
 module.exports = {
     login,
-    refreshToken
+    refreshToken,
+    logout
 }
